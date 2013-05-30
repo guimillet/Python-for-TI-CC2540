@@ -14,6 +14,7 @@ def initserial():
 	else:
 		bt.port = "COM3"
 	bt.baudrate = 57600
+	bt.timeout = 2
 	bt.open()
 	return bt
 
@@ -41,8 +42,8 @@ dev.thread=thr
 
 while(bt.isOpen()):  #Neues DatenPAKET wird gelesen
 	HCI_Packet_Type = bt.read()
-	print("======================")
 	if HCI_Packet_Type == '\x04':	#verzweigungen... hier event
+		print("======================")
 		print "Found Event Packet"
 		EVENT_CODE=bt.read()
 		if EVENT_CODE=='\xFF':
@@ -54,6 +55,8 @@ while(bt.isOpen()):  #Neues DatenPAKET wird gelesen
 		print "Data length :"+str(DATA_LENGTH[0])
 		print "Data Code :"+str(DATA_LENGTH[1])
 		HCIEvents().lookup(DATA_LENGTH[1])(DATA_LENGTH[0],bt,dev)
+	elif HCI_Packet_Type=="":
+		continue
 	else:
 		print struct.unpack('<B',HCI_Packet_Type)
 		print "broken!"

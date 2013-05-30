@@ -16,8 +16,12 @@ class keythread(Thread):
 				self.BTDev.doDiscovery()
 			if x=="e" and self.BTDev.foundDevices!={}:
 				self.BTDev.doEstablishLink(0)
-			if x=="t" and self.BTDev.connHandle!="":
-				self.BTDev.doTerminateLink()
+			if x=="t":
+				if self.BTDev.connHandle!="":
+					self.BTDev.doTerminateLink()
+				else:
+					self.BTDev.ser.close()
+					print "Terminating App"
 			if x=="1":
 				self.BTDev.writeStack.append(self.BTDev.activateAccelerometer)
 				self.BTDev.writeStack.append(self.BTDev.setUpZAccNotifications)
@@ -61,7 +65,7 @@ class BTDevice(object):
 	CSRK="\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 	foundDevices={}
 	connHandle=""
-	thread=Thread()
+	thread=0
 	writeStack=[]
 	def doDiscovery(self):
 		print "Doing Discovery"
